@@ -1,0 +1,17 @@
+#ifndef LongInt_H
+#define LongInt_H
+
+
+class LongInt{
+friend ostream& operator<<(ostream &, const LongInt &);
+friend istream& operator>>(istream &, LongInt &);
+friend LongInt operator+(LongInt &, LongInt &);
+
+ public:
+ LongInt();
+ List<int> sumLongInt(LongInt &, LongInt &);
+ const LongInt& operator=(const LongInt& rhs);
+ List<int> num1;
+};//end class Long Int
+
+#endif

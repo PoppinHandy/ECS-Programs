@@ -1,0 +1,142 @@
+
+#include "LinkedList.h"
+#include "StackLi.h"
+#include "LongInt.h"
+#include <iostream>
+#include <stdexcept>
+#include <cctype> //for isdigit
+
+
+LongInt::LongInt(){
+  num1.makeEmpty();
+}//end constructor
+
+const LongInt& LongInt::operator=(const LongInt& rhs){
+  if(&rhs == this){
+    return *this;
+  }
+  num1 = rhs.num1;
+  return *this;
+}//end operator= 
+
+std::istream& operator>>(istream &input, LongInt &n1){
+  //Take in the character and split each digit, putting each digit
+  //into a list
+  ListItr <int> itr;
+  int convertChar;
+  char digit;
+  while (isdigit(input.peek())){
+    input >> digit;
+    convertChar = int(digit) - 48;
+    n1.num1.insert(convertChar, itr);
+    std::cout<< "inserting " << digit << endl;
+  }
+  input.ignore(1, '\n');
+  return input;
+}//end operator>>
+
+/*
+Input: 2 lists containing the long int numbers
+Output: List containing the solution
+Initiate two stacks to do the operation, take the first
+value of linked list, put it in a stack, increment iterator,
+do the same for the second stack. Add top stacks together.
+If s1.top + s2.top > 9, add 1 to carry stack. Loop through the rest
+of the lists, adding 1 to resulting number and popping stack.
+Execeptions: if itr.isPastEnd() for any list, then print the 
+remaining numbers of the other list out
+ */
+List<int> LongInt::sumLongInt(LongInt &n1, LongInt &n2){
+  static StackLi<int> carryStack;
+  List <int> soln;
+  //StackLi <int> firstS;
+  //StackLi <int> secondS;
+  int sum = 0;
+  ListItr <int> itr1 = n1.num1.first();
+  ListItr <int> itr2 = n2.num1.first();
+  ListItr <int> solnItr = soln.zeroth();
+  while(!itr1.isPastEnd() && !itr2.isPastEnd()){
+    sum = itr1.retrieve() + itr2.retrieve();
+    //mainly for first two numbers, and with no carrying of 1
+    if (sum > 9 && carryStack.isEmpty()){
+      soln.insert(sum - 10, solnItr);
+      std::cout << "adding: " << solnItr.retrieve() << endl;
+      solnItr.advance(); //moves it forward aka inserting the list from the end
+      carryStack.push(1);
+      itr1.advance();
+      itr2.advance();
+    }
+    //there is a one carry and sum is greater than nine
+    else if(sum > 9 && !carryStack.isEmpty()){
+      soln.insert(sum - 10 + carryStack.topAndPop(), solnItr); //stack now empty
+      std::cout << "adding: " << solnItr.retrieve()<< endl;
+      solnItr.advance();
+      itr1.advance();
+      itr2.advance();
+    }
+    //sum doesnt carry over, but there's still a 1 from last calculation
+    else if (sum <= 9 && !carryStack.isEmpty()){
+      soln.insert(sum + carryStack.topAndPop(), solnItr); //stack now empty
+      std::cout << "adding: " << solnItr.retrieve()<< endl;
+      solnItr.advance();
+      itr1.advance();
+      itr2.advance();
+    }//end if else
+    //sum doesn't carry over and there's no 1 to carry over from
+    else{
+      soln.insert(sum, solnItr); 
+      std::cout << "adding: " << solnItr.retrieve()<< endl;
+      solnItr.advance();
+      itr1.advance();
+      itr2.advance();
+    }//end else
+  }//end while
+      
+  //At this point either both int lists have already gone through, or one 
+  //of them has
+  if (!itr2.isPastEnd()){
+    std::cout << "Not finished yet!" << endl;
+    while(!itr2.isPastEnd()){
+      if(!carryStack.isEmpty()){
+	soln.insert(itr2.retrieve() + carryStack.topAndPop(), solnItr);
+	std::cout << "NotFINISHEDYETadding: " << solnItr.retrieve()<< endl;
+	solnItr.advance();
+      }else{
+	soln.insert(itr2.retrieve(), solnItr);
+	std::cout << "NOTFINISHEDYETadding: " << solnItr.retrieve()<< endl;
+	solnItr.advance();
+      }//end else
+    }//end while
+  }else if(!itr1.isPastEnd()){
+    std::cout << "Not finished yet! " << endl;
+    while(!itr1.isPastEnd()){
+      if(!carryStack.isEmpty()){
+	soln.insert(itr1.retrieve() + carryStack.topAndPop(), solnItr);
+	std::cout << "NOTFINISHEDYETadding: " << solnItr.retrieve()<< endl;
+	solnItr.advance();
+      }else{
+	soln.insert(itr1.retrieve(), solnItr);
+	std::cout << "NOTFINISHEDYETadding: " << solnItr.retrieve()<< endl;
+	solnItr.advance();
+      }//end else
+    }//end while
+  }//end else if
+  
+  return soln;
+}//end sumLongInt
+
+LongInt operator+(LongInt &n1, LongInt &n2){
+  LongInt intTmp;
+  intTmp.num1 = n1.sumLongInt(n1,n2);
+  return intTmp;
+}//end operator+
+
+std::ostream& operator<<(ostream &out, const LongInt &n1){
+  ListItr <int> itr = n1.num1.zeroth();
+  while(!itr.isPastEnd()){
+    out << itr.retrieve();
+    itr.advance();
+  }//end while
+  return out;
+}//end operator <<
+  
