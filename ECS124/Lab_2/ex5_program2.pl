@@ -12,11 +12,11 @@
 #conditions. The straight line | in a regular expression is
 # an OR. 
 
-$file = 'testfile';
+$file = 'ex5_testfile.txt';
 open (INFO, $file);
 $line = <INFO>;
 
-if ($line =~ m/(^| |=|>)((a|t|c|g|A|T|C|G){3,})/ ) {
+if ($line =~ m/(^| |=|>)([^BD-FH-SU-Zbd-fh-su-z][ATCGatcg]{3,})/ ) {
     print "The input line does contain what looks like a dna sequence of length at least three, and it is $2 \n";
 }
 else  {

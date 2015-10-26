@@ -29,17 +29,21 @@ while ( $line = <INFO>) {     # Read one line at a time from INFO, until
                               # all lines have been read in.
                               # process each line in the block enclosed by
                               # nested {...}
-if ($line =~ m/.*?ACCESSION .*?([A-Z]{1,2}\d{3,7})[ ,.;:?]/)  {
-print OUTFO "The input line does contain an Accession number, and it
-is $1.  \n";  # Note the use of OUTFO to direct the printing to the
-              # file associated with OUTFO. Note no punctuation before
-              # or after the word OUTFO.
+@matches = $line =~ m/.*?ACCESSION .*?([A-Z]{1,2}\d{3,7})[ ,.;:?]/g;
+for ($i = 0; $i < @matches; $i++){
+print OUTFO "$matches[$i]\n";
 }
-else  {
-  print OUTFO "The input line does not contain an Accession number\n";
-}
+#if ($line =~ m/.*?ACCESSION .*?([A-Z]{1,2}\d{3,7})[ ,.;:?]/g)  {
+#print OUTFO "$1\n"
+# Note the use of OUTFO to direct the printing to the
+# file associated with OUTFO. Note no punctuation before
+# or after the word OUTFO.
+#}
+#else  {
+#  print OUTFO "The input line does not contain an Accession number\n";
+#}
 
-print OUTFO "The input line is \n$line";
+#print OUTFO "The input line is \n$line";
 
 }  # This is the end of the while block. This } matches the { on while
    # line. Note that there are two nested {...} blocks inside this block
