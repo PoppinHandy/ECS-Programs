@@ -4,10 +4,15 @@
 # an associative array where each key is one distinct k-mer in the string,
 # and the associated value is the starting position where that
 #k-mer is FIRST found.  Compare this to kmer2.pl
-
-open DB, <DATA>;
-open QUERY, <DATA>;
-$k = <DATA>;
+print "Enter the database file name: ";
+$dataname = <>;
+chomp $dataname;
+print "Enter the query file name: ";
+$queryname = <>;
+chomp $queryname;
+open DB, $dataname;
+open QUERY, $queryname;
+$k = 4;
 chomp $k;
 $query = <QUERY>;
 @seq = split(//, $query);
@@ -99,7 +104,3 @@ while ($database = <DB>){
 close (DB);
 close(QUERY);
 
-__DATA__
-database.txt
-query.txt
-4
